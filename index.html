@@ -822,9 +822,28 @@ class Component extends DCLogic {
     };
   }
 
+  scrollToFounders() {
+    const scroll  = document.getElementById('treeScroll');
+    const canvas  = document.getElementById('treeCanvas');
+    const target  = document.getElementById('nc-mangaldas') || document.getElementById('founders-link');
+    if (!scroll || !canvas || !target) return;
+    // Accumulate target's left offset relative to canvas
+    let left = 0, node = target;
+    while (node && node !== canvas) { left += node.offsetLeft; node = node.offsetParent; }
+    // Centre the target horizontally within the scroll container (accounting for zoom scale)
+    const scaledCx = (left + target.offsetWidth / 2) * this.scale;
+    scroll.scrollLeft = scaledCx - scroll.clientWidth / 2;
+  }
+
   componentDidMount() {
     this.applyAccent();
-    const run = () => { this.buildBranchNav(); this.applyBranchColors(); this.autoFit(); this.drawLines(); };
+    const run = () => {
+      this.buildBranchNav();
+      this.applyBranchColors();
+      this.autoFit();
+      this.drawLines();
+      this.scrollToFounders();
+    };
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(() => setTimeout(run, 60));
     }
