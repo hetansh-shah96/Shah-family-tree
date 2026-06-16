@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>House Shah — Family Chronicle</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --stone:      #0d0d0d;
+  --stone-mid:  #161410;
+  --stone-card: #1a1712;
+  --stone-lite: #252018;
+  --iron:       #3a3530;
+  --iron-light: #4a433c;
+  --gold:       #c8952a;
+  --gold-dim:   #8a6318;
+  --gold-pale:  #f5d98a;
+  --silver:     #9ea8aa;
+  --silver-dim: #6a7476;
+  --snow:       #d0cfc8;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--stone);
+  color: var(--snow);
+  font-family: 'IM Fell English', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    radial-gradient(ellipse at 20% 0%, rgba(200,149,42,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, rgba(200,149,42,0.03) 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.page { position: relative; z-index: 1; }
+
+/* ── BANNER ── */
+.banner { text-align: center; padding: 40px 20px 30px; position: relative; }
+.banner::before, .banner::after { content: '⚔'; position: absolute; top: 44px; font-size: 1.4rem; color: var(--gold-dim); opacity: 0.5; }
+.banner::before { left: 5%; } .banner::after { right: 5%; }
+.house-sigil { font-size: 2.4rem; line-height: 1; margin-bottom: 10px; filter: drop-shadow(0 0 12px rgba(200,149,42,0.5)); }
+.house-name { font-family: 'Cinzel Decorative', serif; font-size: clamp(1.6rem,5vw,3.4rem); font-weight: 700; color: var(--gold); letter-spacing: 0.1em; text-shadow: 0 0 30px rgba(200,149,42,0.4), 0 2px 4px rgba(0,0,0,0.8); }
+.house-words { font-family: 'IM Fell English', serif; font-style: italic; font-size: clamp(0.78rem,2vw,1rem); color: var(--silver); letter-spacing: 0.1em; margin-top: 6px; }
+.hr-sword { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 14px auto; max-width: 500px; }
+.hr-sword::before, .hr-sword::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg,transparent,var(--gold-dim),transparent); }
+.hr-sword span { color: var(--gold); font-size: 1rem; }
+.maester-stats { display: flex; justify-content: center; max-width: 620px; margin: 0 auto; border: 1px solid var(--iron); border-radius: 2px; overflow: hidden; }
+.m-stat { flex: 1; padding: 8px 4px; text-align: center; border-right: 1px solid var(--iron); background: var(--stone-card); }
+.m-stat:last-child { border-right: none; }
+.m-n { display: block; font-family: 'Cinzel', serif; font-size: 1.3rem; color: var(--gold); line-height: 1; }
+.m-l { display: block; font-size: 0.52rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--silver-dim); margin-top: 3px; }
+
+/* ── SEARCH ── */
+.maester-search { display: flex; justify-content: center; padding: 0 16px 4px; }
+.maester-search input { background: var(--stone-card); border: 1px solid var(--iron); color: var(--snow); font-family: 'IM Fell English', serif; font-style: italic; font-size: 0.88rem; padding: 8px 18px; outline: none; width: 100%; max-width: 360px; letter-spacing: 0.04em; border-radius: 1px; transition: border-color 0.2s; }
+.maester-search input:focus { border-color: var(--gold-dim); box-shadow: 0 0 14px rgba(200,149,42,0.12); }
+.maester-search input::placeholder { color: var(--iron-light); }
+.hl { background: rgba(200,149,42,0.25); border-radius: 1px; padding: 0 1px; color: var(--gold-pale); }
+
+/* ── BRANCH NAVIGATOR ── */
+.branch-nav-wrap { overflow-x: auto; overflow-y: hidden; padding: 10px 16px; display: none; -webkit-overflow-scrolling: touch; border-bottom: 1px solid var(--iron); }
+.branch-nav-wrap::-webkit-scrollbar { height: 0; }
+.branch-nav { display: flex; gap: 8px; width: max-content; }
+.branch-nav-btn { background: var(--stone-card); border: 1px solid var(--iron); color: var(--silver-dim); font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.08em; padding: 6px 12px; cursor: pointer; border-radius: 1px; white-space: nowrap; transition: border-color 0.2s, color 0.2s; }
+.branch-nav-btn:hover, .branch-nav-btn.active { border-color: var(--gold-dim); color: var(--gold); }
+
+/* ── HINT ── */
+.scroll-hint { text-align: center; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--iron-light); margin: 10px 0 0; }
+
+/* ── TREE SCROLL ── */
+.tree-scroll { overflow-x: auto; overflow-y: visible; padding: 16px 0 40px; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; }
+.tree-scroll::-webkit-scrollbar { height: 3px; }
+.tree-scroll::-webkit-scrollbar-track { background: var(--stone-mid); }
+.tree-scroll::-webkit-scrollbar-thumb { background: var(--iron); border-radius: 2px; }
+
+.tree-canvas {
+  position: relative;
+  min-width: max-content;
+  padding: 0 60px 100px;
+  display: flex; flex-direction: column; align-items: center; gap: 0;
+  transform-origin: 0 0;
+  animation: fadeUp 0.6s ease forwards;
+}
+
+#connector-svg { position: absolute; top: 0; left: 0; pointer-events: none; overflow: visible; }
+
+/* ── NODES ── */
+.gen-row { display: flex; justify-content: center; align-items: flex-start; width: 100%; }
+.node { display: flex; flex-direction: column; align-items: center; }
+
+.node-card {
+  background: var(--stone-card); border: 1px solid var(--iron); border-radius: 2px;
+  padding: 8px 14px; text-align: center; position: relative; white-space: nowrap;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  cursor: default;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.03);
+}
+.node-card:hover { border-color: var(--gold-dim); box-shadow: 0 0 18px rgba(200,149,42,0.18), 0 4px 20px rgba(0,0,0,0.7); transform: translateY(-2px); }
+.node-card::after { content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 1px; background: linear-gradient(90deg,transparent,var(--gold-dim),transparent); opacity: 0; transition: opacity 0.2s; }
+.node-card:hover::after { opacity: 1; }
+
+.node-card.founder { border-color: var(--gold-dim); background: linear-gradient(160deg,#1e1a12,#141008); padding: 12px 22px; box-shadow: 0 0 24px rgba(200,149,42,0.15), 0 4px 24px rgba(0,0,0,0.8), inset 0 1px 0 rgba(200,149,42,0.1); }
+.node-card.founder::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,transparent,var(--gold),transparent); }
+.node-card.founder .n-name { font-size: 1rem; color: var(--gold-pale); }
+
+/* ── ANCESTOR CARDS ── */
+.node-card.ancestor-card {
+  background: linear-gradient(160deg, #110d09, #0a0806);
+  border-color: var(--gold-dim);
+  opacity: 0.78;
+  padding: 6px 16px;
+}
+.node-card.ancestor-card .n-name { color: var(--gold-pale); font-size: 0.76rem; }
+.node-card.ancestor-card:hover { opacity: 1; }
+
+/* ── SPOUSE CARDS ── */
+.node-card.spouse-card { background: #131c1e; border-color: #3a5a60; }
+.node-card.spouse-card:hover { border-color: #5a8a92; box-shadow: 0 0 14px rgba(90,138,146,0.2), 0 4px 20px rgba(0,0,0,0.7); transform: translateY(-2px); }
+.node-card.spouse-card::after { background: linear-gradient(90deg,transparent,#3a5a60,transparent); }
+.node-card.spouse-card .n-name { color: #7ab8c0; font-weight: 600; }
+
+.n-name { font-family: 'Cinzel', serif; font-size: 0.82rem; font-weight: 600; color: var(--snow); letter-spacing: 0.04em; line-height: 1.2; }
+
+.marriage-link { display: flex; align-items: center; }
+.m-sep { width: 32px; height: 1px; background: var(--silver-dim); position: relative; flex-shrink: 0; }
+.m-sep::before { content: '⚭'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 0.65rem; color: var(--silver); background: var(--stone); padding: 0 3px; line-height: 1; margin-top: -1px; }
+
+/* ── SPACING ── */
+.v-gap-lg { height: 48px; }
+.v-gap-sm { height: 28px; }
+.v-gap-xs { height: 20px; }
+
+/* ── LAYOUT ── */
+.children-band { display: flex; align-items: flex-start; justify-content: center; gap: 20px; }
+
+/* Gen 0 (Kalidas's children: Kantilal-bro | Mangaldas | Chandu) */
+.g0-band { display: flex; align-items: flex-start; justify-content: center; gap: 40px; width: 100%; }
+.g0-col { display: flex; flex-direction: column; align-items: center; flex: 0 0 auto; position: relative; }
+.g0c-row { display: flex; align-items: flex-start; justify-content: center; gap: 10px; }
+.g0c-col { display: flex; flex-direction: column; align-items: center; flex: 0 0 auto; min-width: 80px; }
+
+.g2-col { display: flex; flex-direction: column; align-items: center; flex: 0 0 auto; position: relative; }
+.g3-row { display: flex; align-items: flex-start; justify-content: center; gap: 12px; }
+.g3-col { display: flex; flex-direction: column; align-items: center; flex: 0 0 auto; min-width: 90px; position: relative; }
+.g4-row { display: flex; align-items: flex-start; justify-content: center; gap: 8px; }
+.g4-col { display: flex; flex-direction: column; align-items: center; flex: 0 0 auto; min-width: 80px; }
+.g5-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 0 4px; }
+.g5-chip { background: var(--stone-lite); border: 1px solid var(--gold-dim); border-radius: 1px; padding: 3px 8px; font-family: 'Cinzel', serif; font-size: 0.62rem; color: var(--snow); letter-spacing: 0.04em; white-space: nowrap; }
+
+/* ── ZOOM CONTROLS ── */
+.zoom-bar { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 150; display: flex; align-items: center; background: var(--stone-card); border: 1px solid var(--gold-dim); border-radius: 2px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
+.zoom-btn { background: transparent; border: none; border-right: 1px solid var(--iron); color: var(--gold); font-family: 'Cinzel', serif; font-size: 1rem; padding: 7px 14px; cursor: pointer; transition: background 0.15s; line-height: 1; }
+.zoom-btn:last-child { border-right: none; }
+.zoom-btn:hover { background: var(--stone-lite); }
+.zoom-label { font-family: 'Cinzel', serif; font-size: 0.65rem; color: var(--silver-dim); padding: 7px 12px; border-right: 1px solid var(--iron); min-width: 46px; text-align: center; letter-spacing: 0.06em; }
+
+/* ── ADD MEMBER BUTTON ── */
+.add-member-btn { position: fixed; bottom: 24px; right: 24px; z-index: 150; background: var(--stone-card); border: 1px solid var(--gold-dim); color: var(--gold); font-family: 'Cinzel', serif; font-size: 0.72rem; letter-spacing: 0.1em; padding: 9px 16px; cursor: pointer; border-radius: 2px; box-shadow: 0 0 20px rgba(200,149,42,0.15), 0 4px 16px rgba(0,0,0,0.6); transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; }
+.add-member-btn:hover { border-color: var(--gold); box-shadow: 0 0 28px rgba(200,149,42,0.28); transform: translateY(-2px); }
+
+/* ── MODAL ── */
+.modal-overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.75); align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal-box { background: var(--stone-card); border: 1px solid var(--gold-dim); border-top: 2px solid var(--gold); padding: 24px 28px; min-width: 300px; max-width: 420px; width: 92vw; box-shadow: 0 0 40px rgba(200,149,42,0.12), 0 8px 40px rgba(0,0,0,0.8); }
+.modal-title { font-family: 'Cinzel Decorative', serif; font-size: 0.95rem; color: var(--gold); letter-spacing: 0.08em; margin-bottom: 20px; text-align: center; }
+.modal-field { margin-bottom: 14px; }
+.modal-field label { display: block; font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--silver-dim); margin-bottom: 5px; }
+.modal-field input, .modal-field select { width: 100%; background: var(--stone-lite); border: 1px solid var(--iron); color: var(--snow); font-family: 'IM Fell English', serif; font-style: italic; font-size: 0.88rem; padding: 7px 11px; outline: none; border-radius: 1px; transition: border-color 0.2s; }
+.modal-field input:focus, .modal-field select:focus { border-color: var(--gold-dim); }
+.modal-field input::placeholder { color: var(--iron-light); }
+.modal-field select option { background: var(--stone-card); color: var(--snow); font-style: normal; }
+.modal-field select optgroup { color: var(--gold-dim); font-style: normal; background: var(--stone-mid); }
+.modal-note { font-family: 'IM Fell English', serif; font-style: italic; font-size: 0.7rem; color: var(--silver-dim); margin-bottom: 16px; text-align: center; min-height: 1.2em; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.btn-cancel { background: transparent; border: 1px solid var(--iron); color: var(--silver-dim); font-family: 'Cinzel', serif; font-size: 0.66rem; letter-spacing: 0.1em; padding: 7px 14px; cursor: pointer; border-radius: 1px; transition: border-color 0.2s; }
+.btn-cancel:hover { border-color: var(--silver-dim); }
+.btn-submit { background: linear-gradient(160deg,#1e1a12,#141008); border: 1px solid var(--gold-dim); color: var(--gold); font-family: 'Cinzel', serif; font-size: 0.66rem; letter-spacing: 0.1em; padding: 7px 16px; cursor: pointer; border-radius: 1px; transition: border-color 0.2s, box-shadow 0.2s; }
+.btn-submit:hover { border-color: var(--gold); box-shadow: 0 0 14px rgba(200,149,42,0.2); }
+
+/* ── BOTTOM ── */
+.raven-scroll { max-width: 680px; margin: 40px auto 0; border: 1px solid var(--iron); border-top: 2px solid var(--gold-dim); background: var(--stone-card); padding: 18px 22px; position: relative; }
+.raven-scroll::before { content: '🦅'; position: absolute; top: -14px; left: 50%; transform: translateX(-50%); font-size: 1.1rem; background: var(--stone-card); padding: 0 8px; }
+.raven-title { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold-dim); text-align: center; margin-bottom: 12px; }
+.raven-list { list-style: none; }
+.raven-list li { font-family: 'IM Fell English', serif; font-style: italic; font-size: 0.76rem; color: var(--silver-dim); line-height: 1.7; padding-left: 16px; position: relative; }
+.raven-list li::before { content: '⚔'; position: absolute; left: 0; font-size: 0.48rem; color: var(--gold-dim); top: 4px; }
+.maester-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin: 28px auto 0; padding: 14px 16px; border-top: 1px solid var(--iron); max-width: 680px; }
+.leg-item { display: flex; align-items: center; gap: 8px; font-size: 0.66rem; color: var(--silver-dim); font-family: 'Cinzel', serif; letter-spacing: 0.04em; }
+.leg-box { width: 18px; height: 11px; border: 1px solid; border-radius: 1px; }
+.site-foot { text-align: center; padding: 24px 20px 100px; font-family: 'IM Fell English', serif; font-style: italic; font-size: 0.7rem; color: var(--iron-light); }
+
+/* ── MOBILE ── */
+@media (max-width: 860px) {
+  .branch-nav-wrap { display: block; }
+  .banner::before, .banner::after { display: none; }
+  .add-member-btn { bottom: 70px; right: 16px; font-size: 0.68rem; padding: 8px 13px; }
+  .zoom-bar { bottom: 16px; }
+  .node-card { padding: 6px 10px; }
+  .n-name { font-size: 0.75rem; }
+  .node-card.founder { padding: 8px 16px; }
+  .node-card.founder .n-name { font-size: 0.88rem; }
+  .g5-chip { font-size: 0.56rem; padding: 2px 6px; }
+  .m-n { font-size: 1.1rem; }
+  .m-l { font-size: 0.48rem; }
+}
+
+@keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+.banner { animation: fadeUp 0.4s ease forwards; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- BANNER -->
+<div class="banner">
+  <div class="house-sigil">🏰</div>
+  <div class="house-name">House Shah</div>
+  <div class="house-words">"Blood binds. Legacy endures."</div>
+  <div class="hr-sword"><span>⚔</span></div>
+  <div class="maester-stats">
+    <div class="m-stat"><span class="m-n">4</span><span class="m-l">Forebears</span></div>
+    <div class="m-stat"><span class="m-n">2</span><span class="m-l">Founders</span></div>
+    <div class="m-stat"><span class="m-n">10</span><span class="m-l">Gen II</span></div>
+    <div class="m-stat"><span class="m-n">23</span><span class="m-l">Gen III</span></div>
+    <div class="m-stat"><span class="m-n">34</span><span class="m-l">Gen IV</span></div>
+    <div class="m-stat"><span class="m-n">9</span><span class="m-l">Gen V</span></div>
+  </div>
+</div>
+
+<div class="maester-search">
+  <input type="text" id="searchInput" placeholder="Search the lineage…">
+</div>
+
+<div class="branch-nav-wrap">
+  <div class="branch-nav" id="branchNav"></div>
+</div>
+
+<div class="scroll-hint">— Scroll · Pinch to zoom —</div>
+
+<!-- TREE -->
+<div class="tree-scroll" id="treeScroll">
+<div class="tree-canvas" id="treeCanvas">
+  <svg id="connector-svg"></svg>
+
+  <!-- ANCESTOR CHAIN -->
+  <div class="gen-row" style="padding-top:10px;">
+    <div class="node-card ancestor-card" id="nc-jaychand"><div class="n-name">Jaychand</div></div>
+  </div>
+  <div class="v-gap-sm"></div>
+  <div class="gen-row">
+    <div class="node-card ancestor-card" id="nc-raichand"><div class="n-name">Raichand</div></div>
+  </div>
+  <div class="v-gap-sm"></div>
+  <div class="gen-row">
+    <div class="node-card ancestor-card" id="nc-hathidas"><div class="n-name">Hathidas</div></div>
+  </div>
+  <div class="v-gap-sm"></div>
+  <div class="gen-row">
+    <div class="marriage-link">
+      <div class="node-card ancestor-card" id="nc-kalidas"><div class="n-name">Kalidas</div></div>
+      <div class="m-sep"></div>
+      <div class="node-card spouse-card"><div class="n-name">Maghu baa</div></div>
+    </div>
+  </div>
+
+  <div class="v-gap-lg"></div>
+
+  <!-- GEN 0 — Kalidas's children: Kantilal (bro) | Mangaldas | Chandu -->
+  <div class="g0-band" id="g0band">
+
+    <!-- Natwarlal (Mangaldas's brother) -->
+    <div class="g0-col" id="g0-kantilal-bro">
+      <div class="node-card" id="nc-kantilal-bro"><div class="n-name">Natwarlal</div></div>
+      <div class="v-gap-sm"></div>
+      <div class="g0c-row">
+        <div class="g0c-col"><div class="node-card" id="nc-dilip"><div class="n-name">Dilip</div></div></div>
+        <div class="g0c-col"><div class="node-card" id="nc-annapurna"><div class="n-name">Annapurna</div></div></div>
+        <div class="g0c-col"><div class="node-card" id="nc-sohag"><div class="n-name">Sohag</div></div></div>
+      </div>
+    </div>
+
+    <!-- Mangaldas ⚭ Gulaab (leads to main descendant tree) -->
+    <div class="g0-col" id="g0-mangaldas">
+      <div class="marriage-link" id="founders-link">
+        <div class="node-card founder" id="nc-mangaldas"><div class="n-name">Mangaldas Shah</div></div>
+        <div class="m-sep"></div>
+        <div class="node-card founder" id="nc-gulaab"><div class="n-name">Gulaab Baa</div></div>
+      </div>
+      <div class="v-gap-lg"></div>
+
+      <!-- GEN II (Mangaldas's children) -->
+      <div class="children-band" id="gen2band">
+
+        <!-- ① KANTILAL (son of Mangaldas) -->
+        <div class="g2-col" id="g2-kantilal">
+          <div class="marriage-link">
+            <div class="node-card" id="nc-kantilal"><div class="n-name">Kantilal</div></div>
+            <div class="m-sep"></div>
+            <div class="node-card spouse-card"><div class="n-name">Kalavati</div></div>
+          </div>
+          <div class="v-gap-sm"></div>
+          <div class="g3-row">
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-smita"><div class="n-name">Smita</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Jitendra</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col">
+                  <div class="marriage-link">
+                    <div class="node-card" id="nc-devang"><div class="n-name">Devang</div></div>
+                    <div class="m-sep"></div>
+                    <div class="node-card spouse-card"><div class="n-name">Ankita</div></div>
+                  </div>
+                  <div class="v-gap-xs"></div>
+                  <div class="g5-row"><div class="g5-chip" id="nc-jahnvi">Jahnvi</div></div>
+                </div>
+                <div class="g4-col"><div class="node-card" id="nc-ritesh"><div class="n-name">Ritesh</div></div></div>
+              </div>
+            </div>
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-sunil"><div class="n-name">Sunil</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Rashmi</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col"><div class="node-card" id="nc-dhrumil"><div class="n-name">Dhrumil</div></div></div>
+                <div class="g4-col"><div class="node-card" id="nc-krupa"><div class="n-name">Krupa</div></div></div>
+              </div>
+            </div>
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-sandeep"><div class="n-name">Sandeep</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Daksha</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col">
+                  <div class="marriage-link">
+                    <div class="node-card" id="nc-miti"><div class="n-name">Miti</div></div>
+                    <div class="m-sep"></div>
+                    <div class="node-card spouse-card"><div class="n-name">Anmol Bagga</div></div>
+                  </div>
+                  <div class="v-gap-xs"></div>
+                  <div class="g5-row"><div class="g5-chip" id="nc-ekaay">Ekaay</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ② NAVNEET -->
+        <div class="g2-col" id="g2-navneet">
+          <div class="marriage-link">
+            <div class="node-card" id="nc-navneet"><div class="n-name">Navneet</div></div>
+            <div class="m-sep"></div>
+            <div class="node-card spouse-card"><div class="n-name">Kalavati</div></div>
+          </div>
+          <div class="v-gap-sm"></div>
+          <div class="g3-row">
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-sharmi"><div class="n-name">Sharmi</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Ashwin</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col">
+                  <div class="marriage-link">
+                    <div class="node-card" id="nc-avani"><div class="n-name">Avani</div></div>
+                    <div class="m-sep"></div>
+                    <div class="node-card spouse-card"><div class="n-name">Dr. Nitul Parikh</div></div>
+                  </div>
+                  <div class="v-gap-xs"></div>
+                  <div class="g5-row"><div class="g5-chip" id="nc-ananya">Ananya</div></div>
+                </div>
+                <div class="g4-col">
+                  <div class="marriage-link">
+                    <div class="node-card" id="nc-alpa"><div class="n-name">Alpa</div></div>
+                    <div class="m-sep"></div>
+                    <div class="node-card spouse-card"><div class="n-name">Nirav</div></div>
+                  </div>
+                  <div class="v-gap-xs"></div>
+                  <div class="g5-row"><div class="g5-chip" id="nc-aarav">Aarav</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-sudhir"><div class="n-name">Sudhir</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Pallavi</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col">
+                  <div class="marriage-link">
+                    <div class="node-card" id="nc-suchita"><div class="n-name">Suchita</div></div>
+                    <div class="m-sep"></div>
+                    <div class="node-card spouse-card"><div class="n-name">Anand Kothari</div></div>
+                  </div>
+                  <div class="v-gap-xs"></div>
+                  <div class="g5-row"><div class="g5-chip" id="nc-aarin">Aarin</div></div>
+                </div>
+                <div class="g4-col">
+                  <div class="marriage-link">
+                    <div class="node-card" id="nc-ruchita"><div class="n-name">Ruchita</div></div>
+                    <div class="m-sep"></div>
+                    <div class="node-card spouse-card"><div class="n-name">Shravan Agarwal</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-shailesh"><div class="n-name">Shailesh</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Charu</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col">
+                  <div class="marriage-link">
+                    <div class="node-card" id="nc-shruti"><div class="n-name">Shruti</div></div>
+                    <div class="m-sep"></div>
+                    <div class="node-card spouse-card"><div class="n-name">Tanay Madhiwala</div></div>
+                  </div>
+                  <div class="v-gap-xs"></div>
+                  <div class="g5-row"><div class="g5-chip" id="nc-vihaan">Vihaan</div></div>
+                </div>
+                <div class="g4-col">
+                  <div class="marriage-link">
+                    <div class="node-card" id="nc-shreyas"><div class="n-name">Shreyas</div></div>
+                    <div class="m-sep"></div>
+                    <div class="node-card spouse-card"><div class="n-name">Upasna Bhattacharya</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ③ RASIK -->
+        <div class="g2-col" id="g2-rasik">
+          <div class="node-card" id="nc-rasik"><div class="n-name">Rasik</div></div>
+        </div>
+
+        <!-- ④ MADHUSUDAN -->
+        <div class="g2-col" id="g2-madhusudan">
+          <div class="marriage-link">
+            <div class="node-card" id="nc-madhusudan"><div class="n-name">Madhusudan</div></div>
+            <div class="m-sep"></div>
+            <div class="node-card spouse-card"><div class="n-name">Kokila</div></div>
+          </div>
+          <div class="v-gap-sm"></div>
+          <div class="g3-row">
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-neelam"><div class="n-name">Neelam</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Pankaj</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col">
+                  <div class="marriage-link">
+                    <div class="node-card" id="nc-rathin"><div class="n-name">Rathin</div></div>
+                    <div class="m-sep"></div>
+                    <div class="node-card spouse-card"><div class="n-name">Jagruti Pandya</div></div>
+                  </div>
+                  <div class="v-gap-xs"></div>
+                  <div class="g5-row"><div class="g5-chip" id="nc-mihika">Mihika</div></div>
+                </div>
+                <div class="g4-col">
+                  <div class="marriage-link">
+                    <div class="node-card" id="nc-ruchi"><div class="n-name">Ruchi</div></div>
+                    <div class="m-sep"></div>
+                    <div class="node-card spouse-card"><div class="n-name">Abhay</div></div>
+                  </div>
+                  <div class="v-gap-xs"></div>
+                  <div class="g5-row"><div class="g5-chip" id="nc-dhruvi">Dhruvi</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="g3-col">
+              <div class="node-card" id="nc-sanjay"><div class="n-name">Sanjay</div></div>
+            </div>
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-parag"><div class="n-name">Parag</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Dipti</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col"><div class="node-card" id="nc-hetansh"><div class="n-name">Hetansh</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ⑤ RAMANLAL (wed Kokila first; Sameer & Rashmi. Later wed Ranjan; Nilesh.) -->
+        <div class="g2-col" id="g2-ramanlal">
+          <div class="marriage-link">
+            <div class="node-card spouse-card"><div class="n-name">Kokila (1st)</div></div>
+            <div class="m-sep"></div>
+            <div class="node-card" id="nc-ramanlal"><div class="n-name">Ramanlal</div></div>
+            <div class="m-sep"></div>
+            <div class="node-card spouse-card"><div class="n-name">Ranjan (2nd)</div></div>
+          </div>
+          <div class="v-gap-sm"></div>
+          <div class="g3-row">
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-sameer"><div class="n-name">Sameer</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Sujata</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col">
+                  <div class="marriage-link">
+                    <div class="node-card" id="nc-binoy"><div class="n-name">Binoy</div></div>
+                    <div class="m-sep"></div>
+                    <div class="node-card spouse-card"><div class="n-name">Unnati</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-rashmi-r"><div class="n-name">Rashmi</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Rashmin</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col">
+                  <div class="marriage-link">
+                    <div class="node-card" id="nc-ritu"><div class="n-name">Ritu</div></div>
+                    <div class="m-sep"></div>
+                    <div class="node-card spouse-card"><div class="n-name">Nirav</div></div>
+                  </div>
+                  <div class="v-gap-xs"></div>
+                  <div class="g5-row"><div class="g5-chip" id="nc-vivaan">Vivaan</div></div>
+                </div>
+                <div class="g4-col"><div class="node-card" id="nc-krunal"><div class="n-name">Krunal</div></div></div>
+              </div>
+            </div>
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-nilesh"><div class="n-name">Nilesh</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Sheetal</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col"><div class="node-card" id="nc-preet"><div class="n-name">Preet</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ⑥ CHAMPAKLAL -->
+        <div class="g2-col" id="g2-champaklal">
+          <div class="marriage-link">
+            <div class="node-card" id="nc-champaklal"><div class="n-name">Champaklal</div></div>
+            <div class="m-sep"></div>
+            <div class="node-card spouse-card"><div class="n-name">Kokila</div></div>
+          </div>
+          <div class="v-gap-sm"></div>
+          <div class="g3-row">
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-sharad"><div class="n-name">Sharad</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Bela</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col"><div class="node-card" id="nc-shlok"><div class="n-name">Shlok</div></div></div>
+                <div class="g4-col"><div class="node-card" id="nc-stuti"><div class="n-name">Stuti</div></div></div>
+              </div>
+            </div>
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-ashish"><div class="n-name">Ashish</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Vaishali</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col"><div class="node-card" id="nc-shivani"><div class="n-name">Shivani</div></div></div>
+                <div class="g4-col"><div class="node-card" id="nc-shreya"><div class="n-name">Shreya</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ⑦ KUSUM -->
+        <div class="g2-col" id="g2-kusum">
+          <div class="marriage-link">
+            <div class="node-card" id="nc-kusum"><div class="n-name">Kusum</div></div>
+            <div class="m-sep"></div>
+            <div class="node-card spouse-card"><div class="n-name">Murlidhar</div></div>
+          </div>
+          <div class="v-gap-sm"></div>
+          <div class="g3-row">
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-amita"><div class="n-name">Amita</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Vinod</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col"><div class="node-card" id="nc-payal"><div class="n-name">Payal</div></div></div>
+                <div class="g4-col"><div class="node-card" id="nc-jalpa"><div class="n-name">Jalpa</div></div></div>
+              </div>
+            </div>
+            <div class="g3-col">
+              <div class="node-card" id="nc-sangeeta"><div class="n-name">Sangeeta</div></div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col"><div class="node-card" id="nc-ronak"><div class="n-name">Ronak</div></div></div>
+              </div>
+            </div>
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-reena"><div class="n-name">Reena</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Nikhil</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col"><div class="node-card" id="nc-deep"><div class="n-name">Deep</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ⑧ URMILA -->
+        <div class="g2-col" id="g2-urmila">
+          <div class="marriage-link">
+            <div class="node-card" id="nc-urmila"><div class="n-name">Urmila</div></div>
+            <div class="m-sep"></div>
+            <div class="node-card spouse-card"><div class="n-name">PK</div></div>
+          </div>
+          <div class="v-gap-sm"></div>
+          <div class="g3-row">
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-amit"><div class="n-name">Amit</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Manisha</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col"><div class="node-card" id="nc-aman"><div class="n-name">Aman</div></div></div>
+              </div>
+            </div>
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-vipul-u"><div class="n-name">Vipul</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Monica</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col"><div class="node-card" id="nc-aayush"><div class="n-name">Aayush</div></div></div>
+                <div class="g4-col"><div class="node-card" id="nc-janavi"><div class="n-name">Janavi</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ⑨ ARVIND -->
+        <div class="g2-col" id="g2-arvind">
+          <div class="marriage-link">
+            <div class="node-card" id="nc-arvind"><div class="n-name">Arvind</div></div>
+            <div class="m-sep"></div>
+            <div class="node-card spouse-card"><div class="n-name">Aruna</div></div>
+          </div>
+          <div class="v-gap-sm"></div>
+          <div class="g3-row">
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-shweta"><div class="n-name">Shweta</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Chetan Upadhyay</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col">
+                  <div class="marriage-link">
+                    <div class="node-card" id="nc-jill"><div class="n-name">Jill</div></div>
+                    <div class="m-sep"></div>
+                    <div class="node-card spouse-card"><div class="n-name">Pimal</div></div>
+                  </div>
+                </div>
+                <div class="g4-col"><div class="node-card" id="nc-hetvi"><div class="n-name">Hetvi</div></div></div>
+              </div>
+            </div>
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-mital"><div class="n-name">Mital</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Parita</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col"><div class="node-card" id="nc-anushka"><div class="n-name">Anushka</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ⑩ SUREKHA -->
+        <div class="g2-col" id="g2-surekha">
+          <div class="marriage-link">
+            <div class="node-card" id="nc-surekha"><div class="n-name">Surekha</div></div>
+            <div class="m-sep"></div>
+            <div class="node-card spouse-card"><div class="n-name">Suresh</div></div>
+          </div>
+          <div class="v-gap-sm"></div>
+          <div class="g3-row">
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-mitesh"><div class="n-name">Mitesh</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Ketki</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col"><div class="node-card" id="nc-dhruv"><div class="n-name">Dhruv</div></div></div>
+              </div>
+            </div>
+            <div class="g3-col">
+              <div class="marriage-link">
+                <div class="node-card" id="nc-mikita"><div class="n-name">Mikita</div></div>
+                <div class="m-sep"></div>
+                <div class="node-card spouse-card"><div class="n-name">Vipul</div></div>
+              </div>
+              <div class="v-gap-xs"></div>
+              <div class="g4-row">
+                <div class="g4-col"><div class="node-card" id="nc-aakash"><div class="n-name">Aakash</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /children-band (gen2band) -->
+    </div><!-- /g0-mangaldas -->
+
+    <!-- Chandu ⚭ Jasi (no heirs) -->
+    <div class="g0-col" id="g0-chandu">
+      <div class="marriage-link">
+        <div class="node-card" id="nc-chandu"><div class="n-name">Chandu</div></div>
+        <div class="m-sep"></div>
+        <div class="node-card spouse-card"><div class="n-name">Jasi</div></div>
+      </div>
+    </div>
+
+  </div><!-- /g0-band -->
+</div><!-- /tree-canvas -->
+</div><!-- /tree-scroll -->
+
+<!-- NOTES -->
+<div class="raven-scroll" style="margin:28px auto; max-width:660px;">
+  <div class="raven-title">Maester's Notes</div>
+  <ul class="raven-list">
+    <li>The lineage traces through <strong style="color:var(--snow)">Raichand → Jaychand → Hathidas → Kalidas</strong> (wed Maghu baa) before reaching the founders.</li>
+    <li>Kalidas had three sons: <strong style="color:var(--snow)">Natwarlal</strong> (father of Dilip, Annapurna &amp; Sohag), <strong style="color:var(--snow)">Mangaldas</strong> (the patriarch), and <strong style="color:var(--snow)">Chandu</strong> (wed Jasi, departed without heirs).</li>
+    <li>Two women bear the name <strong style="color:var(--snow)">Kalavati</strong> — wed to Kantilal and Navneet (sons of Mangaldas) respectively.</li>
+    <li>Three women bear the name <strong style="color:var(--snow)">Kokila</strong> — wed to Madhusudan, Champaklal, and Ramanlal (1st wife) respectively.</li>
+    <li>Ramanlal first wed <strong style="color:var(--snow)">Kokila</strong>; Sameer and Rashmi were born of that union. He later wed <strong style="color:var(--snow)">Ranjan</strong>; Nilesh was born of that second union.</li>
+    <li>Urmila's lord-husband is <strong style="color:var(--snow)">Pravinchandra</strong>, known as PK.</li>
+    <li>Rasik Shah departed this world at ten years of age, leaving no heirs.</li>
+    <li>Sanjay, son of Madhusudan, perished in 1982 at twenty years of age, leaving no descendants.</li>
+    <li>Shruti, daughter of Shailesh, passed away in 2023. Her husband Tanay Madhiwala survives her.</li>
+    <li>Some branches of this lineage remain to be recorded.</li>
+  </ul>
+</div>
+
+<div class="maester-legend">
+  <div class="leg-item"><div class="leg-box" style="background:linear-gradient(160deg,#110d09,#0a0806);border-color:var(--gold-dim);"></div>Forebears</div>
+  <div class="leg-item"><div class="leg-box" style="background:linear-gradient(160deg,#1e1a12,#141008);border-color:var(--gold-dim);"></div>Founders</div>
+  <div class="leg-item"><div class="leg-box" style="background:var(--stone-card);border-color:var(--iron);"></div>Members</div>
+  <div class="leg-item"><div class="leg-box" style="background:#131c1e;border-color:#3a5a60;"></div>Spouses</div>
+  <div class="leg-item"><div class="leg-box" style="background:var(--stone-lite);border-color:var(--iron);"></div>Gen V — Youngest</div>
+</div>
+
+<div class="site-foot">House Shah · Six Generations · The blood endures</div>
+
+</div><!-- /page -->
+
+<!-- ZOOM CONTROLS -->
+<div class="zoom-bar">
+  <button class="zoom-btn" onclick="zoom(-0.1)" title="Zoom out">−</button>
+  <span class="zoom-label" id="zoomLabel">100%</span>
+  <button class="zoom-btn" onclick="zoomReset()" title="Fit to screen">⊡</button>
+  <button class="zoom-btn" onclick="zoom(+0.1)" title="Zoom in">+</button>
+</div>
+
+<button class="add-member-btn" onclick="openAddMember()">＋ Add Member</button>
+
+<!-- ADD MEMBER MODAL -->
+<div class="modal-overlay" id="addMemberModal">
+  <div class="modal-box">
+    <div class="modal-title">Add to the Lineage</div>
+    <div class="modal-field">
+      <label>Name</label>
+      <input type="text" id="newName" placeholder="Enter full name">
+    </div>
+    <div class="modal-field">
+      <label>Spouse <span style="opacity:0.5;font-size:0.85em;">(optional)</span></label>
+      <input type="text" id="newSpouse" placeholder="Spouse name">
+    </div>
+    <div class="modal-field">
+      <label>Parent / Belongs under</label>
+      <select id="parentSelect"></select>
+    </div>
+    <div class="modal-note" id="modalNote"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeAddMember()">Cancel</button>
+      <button class="btn-submit" onclick="submitAddMember()">Add to Tree</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+//  ZOOM
+// ═══════════════════════════════════════
+const treeCanvas = document.getElementById('treeCanvas');
+const treeScroll = document.getElementById('treeScroll');
+let treeScale = 1, fitScale = 1;
+
+function applyZoom(s, skipLines) {
+  treeScale = Math.min(2, Math.max(0.15, s));
+  treeCanvas.style.transform = `scale(${treeScale})`;
+  treeCanvas.style.transformOrigin = '0 0';
+  document.getElementById('zoomLabel').textContent = Math.round(treeScale * 100) + '%';
+  if (!skipLines) drawLines();
+}
+function zoom(delta) { applyZoom(treeScale + delta); }
+function zoomReset() { applyZoom(fitScale); }
+function autoFit() {
+  const canvasW = treeCanvas.scrollWidth;
+  const viewW   = treeScroll.clientWidth - 20;
+  fitScale = Math.min(1, Math.max(0.15, viewW / canvasW));
+  applyZoom(fitScale, true);
+}
+
+let pinchDist0 = 0, pinchScale0 = 1, pinchTimer;
+treeScroll.addEventListener('touchstart', e => {
+  if (e.touches.length === 2) { pinchDist0 = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); pinchScale0 = treeScale; e.preventDefault(); }
+}, { passive: false });
+treeScroll.addEventListener('touchmove', e => {
+  if (e.touches.length === 2) { const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); applyZoom(pinchScale0 * (d / pinchDist0), true); e.preventDefault(); }
+}, { passive: false });
+treeScroll.addEventListener('touchend', () => { clearTimeout(pinchTimer); pinchTimer = setTimeout(drawLines, 200); });
+treeScroll.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); applyZoom(treeScale * (e.deltaY > 0 ? 0.9 : 1.1)); }, { passive: false });
+
+// ═══════════════════════════════════════
+//  SVG CONNECTORS
+// ═══════════════════════════════════════
+function drawLines() {
+  const svg = document.getElementById('connector-svg');
+  svg.innerHTML = '';
+  svg.setAttribute('width',  treeCanvas.scrollWidth);
+  svg.setAttribute('height', treeCanvas.scrollHeight);
+
+  const GOLD = '#c8952a', GOLDDM = '#8a6318';
+
+  function pos(el) {
+    if (!el) return null;
+    let left = 0, top = 0, node = el;
+    while (node && node !== treeCanvas) { left += node.offsetLeft; top += node.offsetTop; node = node.offsetParent; }
+    return { top, bottom: top + el.offsetHeight, left, right: left + el.offsetWidth, cx: left + el.offsetWidth / 2 };
+  }
+
+  function line(x1,y1,x2,y2,color,w,dash) {
+    const l = document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',x1); l.setAttribute('y1',y1); l.setAttribute('x2',x2); l.setAttribute('y2',y2);
+    l.setAttribute('stroke', color||GOLDDM); l.setAttribute('stroke-width', w||1);
+    if (dash) l.setAttribute('stroke-dasharray', dash);
+    svg.appendChild(l);
+  }
+  function dot(cx,cy,r,color) {
+    const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',cx); c.setAttribute('cy',cy); c.setAttribute('r',r||2); c.setAttribute('fill', color||GOLDDM);
+    svg.appendChild(c);
+  }
+  function diamond(cx,cy,sz,color) {
+    const p = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    const d = sz||3;
+    p.setAttribute('points',`${cx},${cy-d} ${cx+d},${cy} ${cx},${cy+d} ${cx-d},${cy}`);
+    p.setAttribute('fill', color||GOLDDM); svg.appendChild(p);
+  }
+
+  // Anchor: always the primary (non-spouse) Shah family card, never the couple center
+  function anchor(col) {
+    return col.querySelector(':scope > .marriage-link > .node-card:not(.spouse-card)')
+        || col.querySelector(':scope > .node-card:not(.spouse-card)')
+        || col.querySelector(':scope > .node-card');
+  }
+
+  function branch(parentEl, childEls, color, w) {
+    const p = pos(parentEl);
+    if (!p) return;
+    const ch = childEls.map(pos).filter(Boolean);
+    if (!ch.length) return;
+    const col = color || GOLDDM;
+    const jY  = p.bottom + (Math.min(...ch.map(c=>c.top)) - p.bottom) * 0.5;
+    line(p.cx, p.bottom, p.cx, jY, col, w||1);
+    diamond(p.cx, jY, 3, col);
+    if (ch.length === 1) { line(p.cx, jY, ch[0].cx, ch[0].top, col, w||1); dot(ch[0].cx, ch[0].top-2, 2, col); return; }
+    line(Math.min(...ch.map(c=>c.cx)), jY, Math.max(...ch.map(c=>c.cx)), jY, col, w||1);
+    ch.forEach(c => { line(c.cx, jY, c.cx, c.top, col, w||1); dot(c.cx, c.top-2, 2, col); });
+  }
+
+  // ── Ancestor chain: Raichand → Jaychand → Hathidas → Kalidas ──
+  const ancIds = ['nc-jaychand','nc-raichand','nc-hathidas'];
+  const ancEls = ancIds.map(id => document.getElementById(id));
+  for (let i = 0; i < ancEls.length - 1; i++) {
+    if (ancEls[i] && ancEls[i+1]) branch(ancEls[i], [ancEls[i+1]], GOLDDM, 1);
+  }
+  const kalidasML = document.getElementById('nc-kalidas')?.closest('.marriage-link') || document.getElementById('nc-kalidas');
+  if (ancEls[2] && kalidasML) branch(ancEls[2], [kalidasML], GOLDDM, 1);
+
+  // ── Kalidas → Gen 0 siblings (Kantilal-bro | Mangaldas | Chandu) ──
+  const g0cols = Array.from(document.querySelectorAll('.g0-col'));
+  const g0anchors = g0cols.map(col => anchor(col)).filter(Boolean);
+  const kalidasCard = document.getElementById('nc-kalidas');
+  if (kalidasCard && g0anchors.length) branch(kalidasCard, g0anchors, GOLDDM, 1.2);
+
+  // ── Kantilal-bro → Dilip, Annapurna, Sohag ──
+  const kantBroCol = document.getElementById('g0-kantilal-bro');
+  if (kantBroCol) {
+    const p  = kantBroCol.querySelector(':scope > .node-card');
+    const ch = Array.from(kantBroCol.querySelectorAll(':scope > .g0c-row > .g0c-col > .node-card'));
+    if (p && ch.length) branch(p, ch, GOLDDM, 1);
+  }
+
+  // ── Mangaldas ⚭ Gulaab → Gen II (10 children) ──
+  const foundersML = document.getElementById('founders-link');
+  if (foundersML) {
+    const g2els = Array.from(document.querySelectorAll('.g2-col')).map(col => pos(anchor(col))).filter(Boolean);
+    if (g2els.length) {
+      const fp   = pos(foundersML);
+      const jY   = fp.bottom + (Math.min(...g2els.map(e=>e.top)) - fp.bottom) * 0.5;
+      line(fp.cx, fp.bottom, fp.cx, jY, GOLD, 1.5);
+      diamond(fp.cx, jY, 4, GOLD);
+      line(Math.min(...g2els.map(e=>e.cx)), jY, Math.max(...g2els.map(e=>e.cx)), jY, GOLD, 1.5);
+      g2els.forEach(e => { line(e.cx,jY,e.cx,e.top,GOLD,1); dot(e.cx,e.top-2,2.5,GOLD); });
+    }
+  }
+
+  // ── Gen II → Gen III ──
+  document.querySelectorAll('.g2-col').forEach(col => {
+    const p  = anchor(col);
+    const ch = Array.from(col.querySelectorAll(':scope > .g3-row > .g3-col')).map(c => anchor(c));
+    if (p && ch.length) branch(p, ch);
+  });
+
+  // ── Gen III → Gen IV ──
+  document.querySelectorAll('.g3-col').forEach(col => {
+    const p  = anchor(col);
+    const ch = Array.from(col.querySelectorAll(':scope > .g4-row > .g4-col')).map(c => anchor(c));
+    if (p && ch.length) branch(p, ch);
+  });
+
+  // ── Gen IV → Gen V chips (dashed) ──
+  document.querySelectorAll('.g4-col').forEach(col => {
+    const pCard = col.querySelector(':scope > .marriage-link > .node-card:first-child') || col.querySelector(':scope > .node-card');
+    const chips = Array.from(col.querySelectorAll(':scope > .g5-row > .g5-chip'));
+    if (!pCard || !chips.length) return;
+    const pr = pos(pCard);
+    chips.forEach(chip => {
+      const cr = pos(chip);
+      if (!pr || !cr) return;
+      const jY = pr.bottom + 6;
+      line(pr.cx, pr.bottom, pr.cx, jY, GOLDDM, 1, '2,2');
+      line(pr.cx, jY, cr.cx, jY, GOLDDM, 1, '2,2');
+      line(cr.cx, jY, cr.cx, cr.top, GOLDDM, 1, '2,2');
+    });
+  });
+}
+
+// ═══════════════════════════════════════
+//  BRANCH NAVIGATOR
+// ═══════════════════════════════════════
+function buildBranchNav() {
+  const nav = document.getElementById('branchNav');
+  nav.innerHTML = '';
+  document.querySelectorAll('.g2-col').forEach(col => {
+    const card = col.querySelector(':scope > .node-card, :scope > .marriage-link > .node-card:not(.spouse-card)');
+    const name = card?.querySelector('.n-name')?.textContent.trim();
+    if (!name) return;
+    const btn = document.createElement('button');
+    btn.className = 'branch-nav-btn';
+    btn.textContent = name;
+    btn.onclick = () => {
+      document.querySelectorAll('.branch-nav-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      col.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    };
+    nav.appendChild(btn);
+  });
+}
+
+// ═══════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════
+window.addEventListener('load', () => {
+  setTimeout(() => { buildBranchNav(); autoFit(); drawLines(); }, 350);
+});
+let resizeTimer;
+window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { autoFit(); drawLines(); }, 200); });
+
+// ═══════════════════════════════════════
+//  ADD MEMBER
+// ═══════════════════════════════════════
+function openAddMember() {
+  const sel = document.getElementById('parentSelect');
+  sel.innerHTML = '<option value="">— Select parent —</option>';
+
+  const groups = { 'Gen II': [], 'Gen III': [], 'Gen IV': [] };
+  document.querySelectorAll('.g2-col').forEach(col => {
+    const c = col.querySelector(':scope > .node-card, :scope > .marriage-link > .node-card:not(.spouse-card)');
+    const n = c?.querySelector('.n-name')?.textContent.trim();
+    if (n && c?.id) groups['Gen II'].push({id: c.id, name: n});
+  });
+  document.querySelectorAll('.g3-col').forEach(col => {
+    const c = col.querySelector(':scope > .node-card, :scope > .marriage-link > .node-card:not(.spouse-card)');
+    const n = c?.querySelector('.n-name')?.textContent.trim();
+    if (n && c?.id) groups['Gen III'].push({id: c.id, name: n});
+  });
+  document.querySelectorAll('.g4-col').forEach(col => {
+    const c = col.querySelector(':scope > .node-card, :scope > .marriage-link > .node-card:not(.spouse-card)');
+    const n = c?.querySelector('.n-name')?.textContent.trim();
+    if (n && c?.id) groups['Gen IV'].push({id: c.id, name: n});
+  });
+
+  Object.entries(groups).forEach(([label, members]) => {
+    if (!members.length) return;
+    const og = document.createElement('optgroup'); og.label = label;
+    members.forEach(m => { const o = document.createElement('option'); o.value = m.id; o.textContent = m.name; og.appendChild(o); });
+    sel.appendChild(og);
+  });
+
+  document.getElementById('modalNote').textContent = '';
+  document.getElementById('newName').value = '';
+  document.getElementById('newSpouse').value = '';
+  sel.onchange = () => {
+    const id = sel.value;
+    if (!id) { document.getElementById('modalNote').textContent = ''; return; }
+    const card = document.getElementById(id);
+    const col  = card?.closest('.g2-col, .g3-col, .g4-col');
+    let msg = '';
+    if (col?.classList.contains('g2-col'))     msg = 'Will be added as Gen III';
+    else if (col?.classList.contains('g3-col')) msg = 'Will be added as Gen IV';
+    else if (col?.classList.contains('g4-col')) msg = 'Will be added as Gen V chip';
+    document.getElementById('modalNote').textContent = msg;
+  };
+  document.getElementById('addMemberModal').classList.add('open');
+}
+
+function closeAddMember() { document.getElementById('addMemberModal').classList.remove('open'); }
+
+function submitAddMember() {
+  const name     = document.getElementById('newName').value.trim();
+  const spouse   = document.getElementById('newSpouse').value.trim();
+  const parentId = document.getElementById('parentSelect').value;
+  if (!name || !parentId) { document.getElementById('modalNote').textContent = 'Please fill in a name and select a parent.'; return; }
+
+  const parentCard = document.getElementById(parentId);
+  if (!parentCard) return;
+  const newId     = 'nc-' + name.toLowerCase().replace(/[^a-z0-9]+/g,'-') + '-' + Date.now();
+  const parentCol = parentCard.closest('.g2-col, .g3-col, .g4-col');
+
+  if (parentCol?.classList.contains('g4-col')) {
+    let row = parentCol.querySelector(':scope > .g5-row');
+    if (!row) { const g = document.createElement('div'); g.className='v-gap-xs'; parentCol.appendChild(g); row = document.createElement('div'); row.className='g5-row'; parentCol.appendChild(row); }
+    const chip = document.createElement('div'); chip.className='g5-chip'; chip.id=newId; chip.textContent=name;
+    row.appendChild(chip);
+  } else {
+    let rowClass, colClass;
+    if (parentCol?.classList.contains('g2-col'))     { rowClass='g3-row'; colClass='g3-col'; }
+    else if (parentCol?.classList.contains('g3-col')) { rowClass='g4-row'; colClass='g4-col'; }
+    else return;
+
+    let row = parentCol.querySelector(':scope > .' + rowClass);
+    if (!row) { const g = document.createElement('div'); g.className='v-gap-xs'; parentCol.appendChild(g); row = document.createElement('div'); row.className=rowClass; parentCol.appendChild(row); }
+    const col = document.createElement('div'); col.className=colClass;
+    if (spouse) {
+      col.innerHTML = `<div class="marriage-link"><div class="node-card" id="${newId}"><div class="n-name">${name}</div></div><div class="m-sep"></div><div class="node-card spouse-card"><div class="n-name">${spouse}</div></div></div>`;
+    } else {
+      col.innerHTML = `<div class="node-card" id="${newId}"><div class="n-name">${name}</div></div>`;
+    }
+    row.appendChild(col);
+  }
+
+  buildBranchNav();
+  closeAddMember();
+  setTimeout(drawLines, 120);
+}
+
+// ═══════════════════════════════════════
+//  SEARCH
+// ═══════════════════════════════════════
+document.getElementById('searchInput').addEventListener('input', function() {
+  const q = this.value.trim().toLowerCase();
+  document.querySelectorAll('.n-name,.g5-chip').forEach(el => { if (el._orig !== undefined) el.innerHTML = el._orig; });
+  document.querySelectorAll('.node-card,.g5-chip').forEach(c => { c.style.opacity=''; c.style.borderColor=''; c.style.boxShadow=''; });
+  if (!q) return;
+  document.querySelectorAll('.n-name,.g5-chip').forEach(el => {
+    if (el._orig === undefined) el._orig = el.innerHTML;
+    const txt = el.textContent, idx = txt.toLowerCase().indexOf(q);
+    if (idx !== -1) {
+      el.innerHTML = txt.slice(0,idx)+'<span class="hl">'+txt.slice(idx,idx+q.length)+'</span>'+txt.slice(idx+q.length);
+      const card = el.closest('.node-card,.g5-chip');
+      if (card) { card.style.borderColor='var(--gold)'; card.style.boxShadow='0 0 16px rgba(200,149,42,0.35)'; }
+    } else {
+      const card = el.closest('.node-card');
+      if (card && card.style.borderColor !== 'var(--gold)') card.style.opacity='0.3';
+    }
+  });
+});
+
+document.getElementById('searchInput').addEventListener('blur', function() {
+  if (!this.value.trim()) document.querySelectorAll('.node-card,.g5-chip').forEach(c => { c.style.opacity=''; c.style.borderColor=''; c.style.boxShadow=''; });
+});
+
+document.getElementById('addMemberModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeAddMember(); });
+</script>
+</body>
+</html>
