@@ -157,6 +157,12 @@ body::before {
 .g5-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 0 4px; }
 .g5-chip { background: var(--stone-lite); border: 1px solid var(--gold-dim); border-radius: 1px; padding: 3px 8px; font-family: 'Cinzel', serif; font-size: 0.62rem; color: var(--snow); letter-spacing: 0.04em; white-space: nowrap; }
 
+/* ── WIFE-SPLIT (Ramanlal) ── */
+.g3-row-split { display: flex; align-items: flex-start; justify-content: center; gap: 0; }
+.g3-wife-group { display: flex; flex-direction: column; align-items: center; }
+.g3-wife-sep { width: 1px; background: var(--iron-light); margin: 0 22px; min-height: 50px; align-self: stretch; opacity: 0.45; position: relative; }
+.g3-wife-sep::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 5px; height: 5px; background: var(--iron-light); border-radius: 50%; }
+
 /* ── ZOOM CONTROLS ── */
 .zoom-bar { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 150; display: flex; align-items: center; background: var(--stone-card); border: 1px solid var(--gold-dim); border-radius: 2px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
 .zoom-btn { background: transparent; border: none; border-right: 1px solid var(--iron); color: var(--gold); font-family: 'Cinzel', serif; font-size: 1rem; padding: 7px 14px; cursor: pointer; transition: background 0.15s; line-height: 1; }
@@ -518,60 +524,72 @@ body::before {
         <!-- ⑤ RAMANLAL (wed Kokila first; Sameer & Rashmi. Later wed Ranjan; Nilesh.) -->
         <div class="g2-col" id="g2-ramanlal">
           <div class="marriage-link">
-            <div class="node-card spouse-card"><div class="n-name">Kokila (1st)</div></div>
+            <div class="node-card spouse-card" id="nc-kokila-1st"><div class="n-name">Kokila (1st)</div></div>
             <div class="m-sep"></div>
             <div class="node-card" id="nc-ramanlal"><div class="n-name">Ramanlal</div></div>
             <div class="m-sep"></div>
-            <div class="node-card spouse-card"><div class="n-name">Ranjan (2nd)</div></div>
+            <div class="node-card spouse-card" id="nc-ranjan-2nd"><div class="n-name">Ranjan (2nd)</div></div>
           </div>
           <div class="v-gap-sm"></div>
-          <div class="g3-row">
-            <div class="g3-col">
-              <div class="marriage-link">
-                <div class="node-card" id="nc-sameer"><div class="n-name">Sameer</div></div>
-                <div class="m-sep"></div>
-                <div class="node-card spouse-card"><div class="n-name">Sujata</div></div>
-              </div>
-              <div class="v-gap-xs"></div>
-              <div class="g4-row">
-                <div class="g4-col">
+          <div class="g3-row-split">
+            <!-- Kokila's children -->
+            <div class="g3-wife-group">
+              <div class="g3-row">
+                <div class="g3-col g3-wife1">
                   <div class="marriage-link">
-                    <div class="node-card" id="nc-binoy"><div class="n-name">Binoy</div></div>
+                    <div class="node-card" id="nc-sameer"><div class="n-name">Sameer</div></div>
                     <div class="m-sep"></div>
-                    <div class="node-card spouse-card"><div class="n-name">Unnati</div></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="g3-col">
-              <div class="marriage-link">
-                <div class="node-card" id="nc-rashmi-r"><div class="n-name">Rashmi</div></div>
-                <div class="m-sep"></div>
-                <div class="node-card spouse-card"><div class="n-name">Rashmin</div></div>
-              </div>
-              <div class="v-gap-xs"></div>
-              <div class="g4-row">
-                <div class="g4-col">
-                  <div class="marriage-link">
-                    <div class="node-card" id="nc-ritu"><div class="n-name">Ritu</div></div>
-                    <div class="m-sep"></div>
-                    <div class="node-card spouse-card"><div class="n-name">Nirav</div></div>
+                    <div class="node-card spouse-card"><div class="n-name">Sujata</div></div>
                   </div>
                   <div class="v-gap-xs"></div>
-                  <div class="g5-row"><div class="g5-chip" id="nc-vivaan">Vivaan</div></div>
+                  <div class="g4-row">
+                    <div class="g4-col">
+                      <div class="marriage-link">
+                        <div class="node-card" id="nc-binoy"><div class="n-name">Binoy</div></div>
+                        <div class="m-sep"></div>
+                        <div class="node-card spouse-card"><div class="n-name">Unnati</div></div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="g4-col"><div class="node-card" id="nc-krunal"><div class="n-name">Krunal</div></div></div>
+                <div class="g3-col g3-wife1">
+                  <div class="marriage-link">
+                    <div class="node-card" id="nc-rashmi-r"><div class="n-name">Rashmi</div></div>
+                    <div class="m-sep"></div>
+                    <div class="node-card spouse-card"><div class="n-name">Rashmin</div></div>
+                  </div>
+                  <div class="v-gap-xs"></div>
+                  <div class="g4-row">
+                    <div class="g4-col">
+                      <div class="marriage-link">
+                        <div class="node-card" id="nc-ritu"><div class="n-name">Ritu</div></div>
+                        <div class="m-sep"></div>
+                        <div class="node-card spouse-card"><div class="n-name">Nirav</div></div>
+                      </div>
+                      <div class="v-gap-xs"></div>
+                      <div class="g5-row"><div class="g5-chip" id="nc-vivaan">Vivaan</div></div>
+                    </div>
+                    <div class="g4-col"><div class="node-card" id="nc-krunal"><div class="n-name">Krunal</div></div></div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="g3-col">
-              <div class="marriage-link">
-                <div class="node-card" id="nc-nilesh"><div class="n-name">Nilesh</div></div>
-                <div class="m-sep"></div>
-                <div class="node-card spouse-card"><div class="n-name">Sheetal</div></div>
-              </div>
-              <div class="v-gap-xs"></div>
-              <div class="g4-row">
-                <div class="g4-col"><div class="node-card" id="nc-preet"><div class="n-name">Preet</div></div></div>
+            <!-- Divider -->
+            <div class="g3-wife-sep"></div>
+            <!-- Ranjan's child -->
+            <div class="g3-wife-group">
+              <div class="g3-row">
+                <div class="g3-col g3-wife2">
+                  <div class="marriage-link">
+                    <div class="node-card" id="nc-nilesh"><div class="n-name">Nilesh</div></div>
+                    <div class="m-sep"></div>
+                    <div class="node-card spouse-card"><div class="n-name">Sheetal</div></div>
+                  </div>
+                  <div class="v-gap-xs"></div>
+                  <div class="g4-row">
+                    <div class="g4-col"><div class="node-card" id="nc-preet"><div class="n-name">Preet</div></div></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -915,9 +933,15 @@ function drawLines() {
     p.setAttribute('fill', color||GOLDDM); svg.appendChild(p);
   }
 
-  // Anchor: always the primary (non-spouse) Shah family card, never the couple center
+  // Anchor: primary (non-spouse) card — used as ARRIVAL point for connector lines
   function anchor(col) {
     return col.querySelector(':scope > .marriage-link > .node-card:not(.spouse-card)')
+        || col.querySelector(':scope > .node-card:not(.spouse-card)')
+        || col.querySelector(':scope > .node-card');
+  }
+  // coupleAnchor: returns the marriage-link div (center between couple) — used as DEPARTURE point
+  function coupleAnchor(col) {
+    return col.querySelector(':scope > .marriage-link')
         || col.querySelector(':scope > .node-card:not(.spouse-card)')
         || col.querySelector(':scope > .node-card');
   }
@@ -945,11 +969,10 @@ function drawLines() {
   const kalidasML = document.getElementById('nc-kalidas')?.closest('.marriage-link') || document.getElementById('nc-kalidas');
   if (ancEls[2] && kalidasML) branch(ancEls[2], [kalidasML], GOLDDM, 1);
 
-  // ── Kalidas → Gen 0 siblings (Kantilal-bro | Mangaldas | Chandu) ──
+  // ── Kalidas → Gen 0 siblings (Natwarlal | Mangaldas | Chandu) ──
   const g0cols = Array.from(document.querySelectorAll('.g0-col'));
   const g0anchors = g0cols.map(col => anchor(col)).filter(Boolean);
-  const kalidasCard = document.getElementById('nc-kalidas');
-  if (kalidasCard && g0anchors.length) branch(kalidasCard, g0anchors, GOLDDM, 1.2);
+  if (kalidasML && g0anchors.length) branch(kalidasML, g0anchors, GOLDDM, 1.2);
 
   // ── Kantilal-bro → Dilip, Annapurna, Sohag ──
   const kantBroCol = document.getElementById('g0-kantilal-bro');
@@ -975,21 +998,33 @@ function drawLines() {
 
   // ── Gen II → Gen III ──
   document.querySelectorAll('.g2-col').forEach(col => {
-    const p  = anchor(col);
+    if (col.id === 'g2-ramanlal') return; // handled separately below
+    const p  = coupleAnchor(col);
     const ch = Array.from(col.querySelectorAll(':scope > .g3-row > .g3-col')).map(c => anchor(c));
     if (p && ch.length) branch(p, ch);
   });
 
+  // ── Ramanlal — separate branches per wife ──
+  const ramanlalCol = document.getElementById('g2-ramanlal');
+  if (ramanlalCol) {
+    const kokila1  = document.getElementById('nc-kokila-1st');
+    const ranjan2  = document.getElementById('nc-ranjan-2nd');
+    const wife1Els = Array.from(ramanlalCol.querySelectorAll('.g3-wife1')).map(c => anchor(c)).filter(Boolean);
+    const wife2Els = Array.from(ramanlalCol.querySelectorAll('.g3-wife2')).map(c => anchor(c)).filter(Boolean);
+    if (kokila1 && wife1Els.length) branch(kokila1, wife1Els);
+    if (ranjan2  && wife2Els.length) branch(ranjan2,  wife2Els);
+  }
+
   // ── Gen III → Gen IV ──
   document.querySelectorAll('.g3-col').forEach(col => {
-    const p  = anchor(col);
+    const p  = coupleAnchor(col);
     const ch = Array.from(col.querySelectorAll(':scope > .g4-row > .g4-col')).map(c => anchor(c));
     if (p && ch.length) branch(p, ch);
   });
 
   // ── Gen IV → Gen V chips (dashed) ──
   document.querySelectorAll('.g4-col').forEach(col => {
-    const pCard = col.querySelector(':scope > .marriage-link > .node-card:first-child') || col.querySelector(':scope > .node-card');
+    const pCard = col.querySelector(':scope > .marriage-link') || col.querySelector(':scope > .node-card');
     const chips = Array.from(col.querySelectorAll(':scope > .g5-row > .g5-chip'));
     if (!pCard || !chips.length) return;
     const pr = pos(pCard);
