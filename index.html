@@ -972,7 +972,8 @@ function drawLines() {
   // ── Kalidas → Gen 0 siblings (Natwarlal | Mangaldas | Chandu) ──
   const g0cols = Array.from(document.querySelectorAll('.g0-col'));
   const g0anchors = g0cols.map(col => anchor(col)).filter(Boolean);
-  if (kalidasML && g0anchors.length) branch(kalidasML, g0anchors, GOLDDM, 1.2);
+  const kalidasCard = document.getElementById('nc-kalidas');
+  if (kalidasCard && g0anchors.length) branch(kalidasCard, g0anchors, GOLDDM, 1.2);
 
   // ── Kantilal-bro → Dilip, Annapurna, Sohag ──
   const kantBroCol = document.getElementById('g0-kantilal-bro');
@@ -999,7 +1000,7 @@ function drawLines() {
   // ── Gen II → Gen III ──
   document.querySelectorAll('.g2-col').forEach(col => {
     if (col.id === 'g2-ramanlal') return; // handled separately below
-    const p  = coupleAnchor(col);
+    const p  = anchor(col);
     const ch = Array.from(col.querySelectorAll(':scope > .g3-row > .g3-col')).map(c => anchor(c));
     if (p && ch.length) branch(p, ch);
   });
@@ -1017,14 +1018,14 @@ function drawLines() {
 
   // ── Gen III → Gen IV ──
   document.querySelectorAll('.g3-col').forEach(col => {
-    const p  = coupleAnchor(col);
+    const p  = anchor(col);
     const ch = Array.from(col.querySelectorAll(':scope > .g4-row > .g4-col')).map(c => anchor(c));
     if (p && ch.length) branch(p, ch);
   });
 
   // ── Gen IV → Gen V chips (dashed) ──
   document.querySelectorAll('.g4-col').forEach(col => {
-    const pCard = col.querySelector(':scope > .marriage-link') || col.querySelector(':scope > .node-card');
+    const pCard = col.querySelector(':scope > .marriage-link > .node-card:not(.spouse-card)') || col.querySelector(':scope > .node-card');
     const chips = Array.from(col.querySelectorAll(':scope > .g5-row > .g5-chip'));
     if (!pCard || !chips.length) return;
     const pr = pos(pCard);
