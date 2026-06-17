@@ -830,9 +830,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   &quot;motto&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;A Chronicle of Six Generations&quot;, &quot;tsType&quot;: &quot;string&quot; },
   &quot;accentColor&quot;: { &quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#c79a3f&quot;, &quot;tsType&quot;: &quot;string&quot; }
 }">
-const GITHUB_TOKEN = ''; // ← paste your GitHub fine-grained PAT here
-const GITHUB_REPO  = ''; // ← 'owner/repo-name'
-const GITHUB_FILE  = 'House Shah Family Chronicle.dc.html'; // ← path within repo (update if in a subfolder)
 const ADDITIONS = []; // __ADDITIONS_END__
 
 class Component extends DCLogic {
@@ -1227,23 +1224,14 @@ class Component extends DCLogic {
   }
 
   async saveToGitHub() {
-    if (!GITHUB_TOKEN || !GITHUB_REPO) {
-      this.showToast('⚠ GitHub not configured — changes are session-only', false);
-      return;
-    }
     try {
       this.showToast('Saving to chronicle…');
-      const apiURL = 'https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_FILE.split('/').map(encodeURIComponent).join('/');
-      const hdrs = { Authorization: 'token ' + GITHUB_TOKEN, Accept: 'application/vnd.github.v3+json' };
-      const { sha, content: raw } = await fetch(apiURL, { headers: hdrs }).then(r => r.json());
-      const decoded = decodeURIComponent(escape(atob(raw.replace(/\n/g, ''))));
-      const updated = decoded.replace(/const ADDITIONS = [\s\S]*?; \/\/ __ADDITIONS_END__/, 'const ADDITIONS = ' + JSON.stringify(ADDITIONS) + '; // __ADDITIONS_END__');
-      const res = await fetch(apiURL, {
-        method: 'PUT',
-        headers: { ...hdrs, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: 'feat: add ' + ADDITIONS[ADDITIONS.length - 1].name, content: btoa(unescape(encodeURIComponent(updated))), sha })
+      const res = await fetch('/api/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ additions: ADDITIONS })
       });
-      if (!res.ok) throw new Error((await res.json()).message || res.status);
+      if (!res.ok) throw new Error((await res.json()).error || res.status);
       this.showToast('Saved — Vercel will redeploy shortly');
     } catch (e) {
       this.showToast('Save failed: ' + e.message, false);
