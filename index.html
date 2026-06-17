@@ -172,6 +172,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 .seg-btn.active{border-color:var(--gold-dim);color:var(--gold-pale);background:linear-gradient(160deg,#2a2114,#1c160d);}
 .branch-accent{position:absolute;top:0;left:14%;right:14%;height:2px;border-radius:2px;pointer-events:none;}
 .bn-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;vertical-align:middle;box-shadow:0 0 6px currentColor;}
+.save-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:300;background:linear-gradient(180deg,var(--stone-card),var(--stone-mid));border:1px solid var(--gold-dim);color:var(--muted);font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.1em;padding:8px 22px;border-radius:4px;opacity:0;transition:opacity .3s;pointer-events:none;text-align:center;max-width:360px;white-space:nowrap;}
+.save-toast.show{opacity:1;}
 @keyframes fadeUp{from{transform:translateY(14px);}to{transform:translateY(0);}}
 </style>
 </helmet>
@@ -188,7 +190,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
     <div class="m-stat"><span class="m-n">10</span><span class="m-l">Gen II</span></div>
     <div class="m-stat"><span class="m-n">23</span><span class="m-l">Gen III</span></div>
     <div class="m-stat"><span class="m-n">34</span><span class="m-l">Gen IV</span></div>
-    <div class="m-stat"><span class="m-n">9</span><span class="m-l">Gen V</span></div>
+    <div class="m-stat"><span class="m-n">12</span><span class="m-l">Gen V</span></div>
   </div>
 </div>
 
@@ -273,9 +275,17 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
                     <div class="node-card spouse-card"><div class="n-name">Ankita</div></div>
                   </div>
                   <div class="v-gap-xs"></div>
-                  <div class="g5-row"><div class="g5-chip" id="nc-jahnvi">Jahnvi</div></div>
+                  <div class="g5-row"><div class="g5-chip" id="nc-janvi">Janvi</div></div>
                 </div>
-                <div class="g4-col"><div class="node-card" id="nc-ritesh"><div class="n-name">Ritesh</div></div></div>
+                <div class="g4-col">
+                  <div class="marriage-link">
+                    <div class="node-card" id="nc-ritesh"><div class="n-name">Ritesh</div></div>
+                    <div class="m-sep"></div>
+                    <div class="node-card spouse-card"><div class="n-name">Nikita</div></div>
+                  </div>
+                  <div class="v-gap-xs"></div>
+                  <div class="g5-row"><div class="g5-chip" id="nc-aryan">Aryan</div></div>
+                </div>
               </div>
             </div>
             <div class="g3-col">
@@ -286,8 +296,25 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
               </div>
               <div class="v-gap-xs"></div>
               <div class="g4-row">
-                <div class="g4-col"><div class="node-card" id="nc-dhrumil"><div class="n-name">Dhrumil</div></div></div>
-                <div class="g4-col"><div class="node-card" id="nc-krupa"><div class="n-name">Krupa</div></div></div>
+                <div class="g4-col">
+                  <div class="marriage-link">
+                    <div class="node-card" id="nc-dhrumil"><div class="n-name">Dhrumil</div></div>
+                    <div class="m-sep"></div>
+                    <div class="node-card spouse-card"><div class="n-name">Disha</div></div>
+                  </div>
+                </div>
+                <div class="g4-col">
+                  <div class="marriage-link">
+                    <div class="node-card" id="nc-krupa"><div class="n-name">Krupa</div></div>
+                    <div class="m-sep"></div>
+                    <div class="node-card spouse-card"><div class="n-name">Milind</div></div>
+                  </div>
+                  <div class="v-gap-xs"></div>
+                  <div class="g5-row">
+                    <div class="g5-chip" id="nc-dhriva">Dhriva</div>
+                    <div class="g5-chip" id="nc-dhruhi">Dhruhi</div>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="g3-col">
@@ -737,6 +764,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
     <li>Three women bear the name <strong>Kokila</strong> &mdash; wed to Madhusudan, Champaklal, and Ramanlal (first wife).</li>
     <li>Ramanlal first wed <strong>Kokila</strong>; Sameer and Rashmi were born of that union. He later wed <strong>Ranjan</strong>; Nilesh was born of that second union.</li>
     <li>Urmila's husband is <strong>Pravinchandra</strong>, known as PK.</li>
+    <li>Rasik Shah departed this world at ten years of age, leaving no heirs.</li>
+    <li>Sanjay, son of Madhusudan, passed in 1982 at twenty years of age, leaving no descendants.</li>
+    <li>Shruti, daughter of Shailesh, passed away in 2023. Her husband Tanay Madhiwala survives her.</li>
     <li>Some branches of this lineage remain to be recorded.</li>
   </ul>
 </div>
@@ -752,6 +782,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 <div class="site-foot">Recorded with care &middot; Six generations of House Shah</div>
 
 </div>
+
+<div class="save-toast" id="saveToast"></div>
 
 <div class="zoom-bar">
   <button class="zoom-btn" onClick="{{ zoomOut }}" title="Zoom out">&minus;</button>
@@ -798,6 +830,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   &quot;motto&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;A Chronicle of Six Generations&quot;, &quot;tsType&quot;: &quot;string&quot; },
   &quot;accentColor&quot;: { &quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#c79a3f&quot;, &quot;tsType&quot;: &quot;string&quot; }
 }">
+const GITHUB_TOKEN = ''; // ← paste your GitHub fine-grained PAT here
+const GITHUB_REPO  = ''; // ← 'owner/repo-name'
+const GITHUB_FILE  = 'House Shah Family Chronicle.dc.html'; // ← path within repo (update if in a subfolder)
+const ADDITIONS = []; // __ADDITIONS_END__
+
 class Component extends DCLogic {
   scale = 1;
   fitScale = 1;
@@ -822,28 +859,9 @@ class Component extends DCLogic {
     };
   }
 
-  scrollToFounders() {
-    const scroll  = document.getElementById('treeScroll');
-    const canvas  = document.getElementById('treeCanvas');
-    const target  = document.getElementById('nc-mangaldas') || document.getElementById('founders-link');
-    if (!scroll || !canvas || !target) return;
-    // Accumulate target's left offset relative to canvas
-    let left = 0, node = target;
-    while (node && node !== canvas) { left += node.offsetLeft; node = node.offsetParent; }
-    // Centre the target horizontally within the scroll container (accounting for zoom scale)
-    const scaledCx = (left + target.offsetWidth / 2) * this.scale;
-    scroll.scrollLeft = scaledCx - scroll.clientWidth / 2;
-  }
-
   componentDidMount() {
     this.applyAccent();
-    const run = () => {
-      this.buildBranchNav();
-      this.applyBranchColors();
-      this.autoFit();
-      this.drawLines();
-      this.scrollToFounders();
-    };
+    const run = () => { this.buildBranchNav(); this.applyBranchColors(); this.replayAdditions(); this.autoFit(); this.drawLines(); };
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(() => setTimeout(run, 60));
     }
@@ -1139,50 +1157,98 @@ class Component extends DCLogic {
       note.textContent = this.addMode === 'spouse' ? 'Please enter a spouse name and select a person.' : 'Please enter a name and select a parent.';
       return;
     }
-    const parentCard = document.getElementById(parentId); if (!parentCard) return;
-    const newId = 'nc-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
+    const id = 'nc-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
+    const addition = { mode: this.addMode, name, parentId, id };
+    if (spouse) addition.spouse = spouse;
+    this.applyAddition(addition);
+    ADDITIONS.push(addition);
+    this.buildBranchNav();
+    this.closeAdd();
+    setTimeout(() => { this.autoFit(); this.drawLines(); }, 120);
+    this.saveToGitHub();
+  }
 
-    // ── Spouse mode: marry the new person to the selected member ──
-    if (this.addMode === 'spouse') {
-      const spouseHTML = '<div class="m-sep"></div><div class="node-card spouse-card"><div class="n-name">' + name + '</div></div>';
+  applyAddition(a) {
+    const parentCard = document.getElementById(a.parentId);
+    if (!parentCard) return;
+    if (a.mode === 'spouse') {
       const host = parentCard.parentElement;
+      const html = '<div class="m-sep"></div><div class="node-card spouse-card"><div class="n-name">' + a.name + '</div></div>';
       if (host && host.classList.contains('marriage-link')) {
-        host.insertAdjacentHTML('beforeend', spouseHTML);
+        host.insertAdjacentHTML('beforeend', html);
       } else {
         const ml = document.createElement('div'); ml.className = 'marriage-link';
         parentCard.parentNode.insertBefore(ml, parentCard);
         ml.appendChild(parentCard);
-        ml.insertAdjacentHTML('beforeend', spouseHTML);
+        ml.insertAdjacentHTML('beforeend', html);
       }
-      this.buildBranchNav();
-      this.closeAdd();
-      setTimeout(() => { this.autoFit(); this.drawLines(); }, 120);
       return;
     }
-
     const parentCol = parentCard.closest('.g2-col, .g3-col, .g4-col');
-    if (parentCol && parentCol.classList.contains('g4-col')) {
+    if (!parentCol) return;
+    if (parentCol.classList.contains('g4-col')) {
       let row = parentCol.querySelector(':scope > .g5-row');
-      if (!row) { const g = document.createElement('div'); g.className = 'v-gap-xs'; parentCol.appendChild(g); row = document.createElement('div'); row.className = 'g5-row'; parentCol.appendChild(row); }
-      const chip = document.createElement('div'); chip.className = 'g5-chip'; chip.id = newId; chip.textContent = name; row.appendChild(chip);
-    } else {
-      let rowClass, colClass;
-      if (parentCol && parentCol.classList.contains('g2-col')) { rowClass = 'g3-row'; colClass = 'g3-col'; }
-      else if (parentCol && parentCol.classList.contains('g3-col')) { rowClass = 'g4-row'; colClass = 'g4-col'; }
-      else return;
-      let row = parentCol.querySelector(':scope > .' + rowClass);
-      if (!row) { const g = document.createElement('div'); g.className = 'v-gap-xs'; parentCol.appendChild(g); row = document.createElement('div'); row.className = rowClass; parentCol.appendChild(row); }
-      const col = document.createElement('div'); col.className = colClass;
-      if (spouse) {
-        col.innerHTML = '<div class="marriage-link"><div class="node-card" id="' + newId + '"><div class="n-name">' + name + '</div></div><div class="m-sep"></div><div class="node-card spouse-card"><div class="n-name">' + spouse + '</div></div></div>';
-      } else {
-        col.innerHTML = '<div class="node-card" id="' + newId + '"><div class="n-name">' + name + '</div></div>';
+      if (!row) {
+        parentCol.appendChild(Object.assign(document.createElement('div'), { className: 'v-gap-xs' }));
+        row = parentCol.appendChild(Object.assign(document.createElement('div'), { className: 'g5-row' }));
       }
-      row.appendChild(col);
+      row.appendChild(Object.assign(document.createElement('div'), { className: 'g5-chip', id: a.id, textContent: a.name }));
+      return;
     }
-    this.buildBranchNav();
-    this.closeAdd();
-    setTimeout(() => { this.autoFit(); this.drawLines(); }, 120);
+    let rowClass, colClass;
+    if (parentCol.classList.contains('g2-col')) { rowClass = 'g3-row'; colClass = 'g3-col'; }
+    else if (parentCol.classList.contains('g3-col')) { rowClass = 'g4-row'; colClass = 'g4-col'; }
+    else return;
+    let row = parentCol.querySelector(':scope > .' + rowClass);
+    if (!row) {
+      parentCol.appendChild(Object.assign(document.createElement('div'), { className: 'v-gap-xs' }));
+      row = parentCol.appendChild(Object.assign(document.createElement('div'), { className: rowClass }));
+    }
+    const col = Object.assign(document.createElement('div'), { className: colClass });
+    col.innerHTML = a.spouse
+      ? '<div class="marriage-link"><div class="node-card" id="' + a.id + '"><div class="n-name">' + a.name + '</div></div><div class="m-sep"></div><div class="node-card spouse-card"><div class="n-name">' + a.spouse + '</div></div></div>'
+      : '<div class="node-card" id="' + a.id + '"><div class="n-name">' + a.name + '</div></div>';
+    row.appendChild(col);
+  }
+
+  replayAdditions() {
+    for (const a of ADDITIONS) this.applyAddition(a);
+  }
+
+  showToast(msg, ok = true) {
+    const t = document.getElementById('saveToast');
+    if (!t) return;
+    t.textContent = msg;
+    t.style.borderColor = ok ? 'var(--gold-dim)' : '#c04040';
+    t.style.color = ok ? 'var(--muted)' : '#e07070';
+    t.classList.add('show');
+    clearTimeout(this._toastTimer);
+    this._toastTimer = setTimeout(() => t.classList.remove('show'), 4000);
+  }
+
+  async saveToGitHub() {
+    if (!GITHUB_TOKEN || !GITHUB_REPO) {
+      this.showToast('⚠ GitHub not configured — changes are session-only', false);
+      return;
+    }
+    try {
+      this.showToast('Saving to chronicle…');
+      const apiURL = 'https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_FILE.split('/').map(encodeURIComponent).join('/');
+      const hdrs = { Authorization: 'token ' + GITHUB_TOKEN, Accept: 'application/vnd.github.v3+json' };
+      const { sha, content: raw } = await fetch(apiURL, { headers: hdrs }).then(r => r.json());
+      const decoded = decodeURIComponent(escape(atob(raw.replace(/\n/g, ''))));
+      const updated = decoded.replace(/const ADDITIONS = [\s\S]*?; \/\/ __ADDITIONS_END__/, 'const ADDITIONS = ' + JSON.stringify(ADDITIONS) + '; // __ADDITIONS_END__');
+      const res = await fetch(apiURL, {
+        method: 'PUT',
+        headers: { ...hdrs, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: 'feat: add ' + ADDITIONS[ADDITIONS.length - 1].name, content: btoa(unescape(encodeURIComponent(updated))), sha })
+      });
+      if (!res.ok) throw new Error((await res.json()).message || res.status);
+      this.showToast('Saved — Vercel will redeploy shortly');
+    } catch (e) {
+      this.showToast('Save failed: ' + e.message, false);
+      console.error(e);
+    }
   }
 }
 </script>
