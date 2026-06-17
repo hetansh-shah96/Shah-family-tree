@@ -4,5 +4,11 @@
     "name": "Pankaj",
     "parentId": "nc-sangeeta",
     "id": "nc-pankaj-1781685008667"
+  },
+  {
+    "mode": "spouse",
+    "name": "Jinal",
+    "parentId": "nc-ronak",
+    "id": "nc-jinal-1781685060475"
   }
 ]
