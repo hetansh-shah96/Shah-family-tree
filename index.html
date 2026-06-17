@@ -830,8 +830,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   &quot;motto&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;A Chronicle of Six Generations&quot;, &quot;tsType&quot;: &quot;string&quot; },
   &quot;accentColor&quot;: { &quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#c79a3f&quot;, &quot;tsType&quot;: &quot;string&quot; }
 }">
-const ADDITIONS = []; // __ADDITIONS_END__
-
 class Component extends DCLogic {
   scale = 1;
   fitScale = 1;
@@ -858,11 +856,12 @@ class Component extends DCLogic {
 
   componentDidMount() {
     this.applyAccent();
-    const run = () => { this.buildBranchNav(); this.applyBranchColors(); this.replayAdditions(); this.autoFit(); this.drawLines(); };
+    const run = () => { this.buildBranchNav(); this.applyBranchColors(); this.autoFit(); this.drawLines(); };
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(() => setTimeout(run, 60));
     }
     setTimeout(run, 450);
+    this.loadAndReplayAdditions();
 
     this._onResize = () => { clearTimeout(this._rt); this._rt = setTimeout(() => { this.autoFit(); this.drawLines(); }, 180); };
     window.addEventListener('resize', this._onResize);
@@ -1158,11 +1157,10 @@ class Component extends DCLogic {
     const addition = { mode: this.addMode, name, parentId, id };
     if (spouse) addition.spouse = spouse;
     this.applyAddition(addition);
-    ADDITIONS.push(addition);
     this.buildBranchNav();
     this.closeAdd();
     setTimeout(() => { this.autoFit(); this.drawLines(); }, 120);
-    this.saveToGitHub();
+    this.saveToGitHub(addition);
   }
 
   applyAddition(a) {
@@ -1208,8 +1206,18 @@ class Component extends DCLogic {
     row.appendChild(col);
   }
 
-  replayAdditions() {
-    for (const a of ADDITIONS) this.applyAddition(a);
+  async loadAndReplayAdditions() {
+    try {
+      const res = await fetch('/api/additions');
+      if (!res.ok) return;
+      const additions = await res.json();
+      for (const a of additions) this.applyAddition(a);
+      this.buildBranchNav();
+      this.autoFit();
+      this.drawLines();
+    } catch (e) {
+      console.error('Could not load additions:', e);
+    }
   }
 
   showToast(msg, ok = true) {
@@ -1223,16 +1231,16 @@ class Component extends DCLogic {
     this._toastTimer = setTimeout(() => t.classList.remove('show'), 4000);
   }
 
-  async saveToGitHub() {
+  async saveToGitHub(addition) {
     try {
       this.showToast('Saving to chronicle…');
       const res = await fetch('/api/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ additions: ADDITIONS })
+        body: JSON.stringify({ addition })
       });
       if (!res.ok) throw new Error((await res.json()).error || res.status);
-      this.showToast('Saved — Vercel will redeploy shortly');
+      this.showToast('Saved to chronicle');
     } catch (e) {
       this.showToast('Save failed: ' + e.message, false);
       console.error(e);
