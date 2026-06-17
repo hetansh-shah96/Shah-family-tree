@@ -22,5 +22,11 @@
     "name": "Mehul",
     "parentId": "nc-jalpa",
     "id": "nc-mehul-1781685102660"
+  },
+  {
+    "mode": "spouse",
+    "name": "Kamal",
+    "parentId": "nc-payal",
+    "id": "nc-kamal-1781685117411"
   }
 ]
